@@ -2,6 +2,7 @@
 
 A small boilerplate app to get prototyping building local-first/multiplayer apps with Replicache and Remix.
 
+This is built following the steps from: https://doc.replicache.dev/byob/intro but adapted for Remix/Drizzle. You can follow along there and reference this code to understand the steps to building it.
 
 ## Local-first
 
