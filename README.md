@@ -1,6 +1,6 @@
 # Welcome to Replimix!
 
-A small boilerplate app to get prototyping building multiplayer apps with Replicache and Remix.
+A small boilerplate app to get prototyping building local-first/multiplayer apps with Replicache and Remix.
 
 - [Remix docs](https://remix.run/docs)
 - [Remix Vite docs](https://remix.run/docs/en/main/guides/vite)
@@ -24,6 +24,6 @@ After your db is set up, you can run the Vite dev server:
 npm run dev
 ```
 
-## Multiplayer goodness!
+## Party!
 
-You can open `localhost:5173` and watch changes get push/pulled in realtime 🥳
+You can access your `localhost:5173` instance in multiple browsers/tabs/computers and watch changes get push/pulled in realtime 🥳
