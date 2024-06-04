@@ -1,41 +1,134 @@
 import type { MetaFunction } from "@remix-run/node";
 
+import { createId } from "@paralleldrive/cuid2";
+import { useEffect, useRef, useState } from "react";
+import {
+  Replicache,
+  TEST_LICENSE_KEY,
+  type WriteTransaction,
+} from "replicache";
+import { useSubscribe } from "replicache-react";
+
+import { useEventSource } from "remix-utils/sse/react";
+import { Message, MessageWithID } from "~/utils/replicache";
+
 export const meta: MetaFunction = () => {
   return [
-    { title: "New Remix App" },
-    { name: "description", content: "Welcome to Remix!" },
+    { title: "New Replimix App" },
+    { name: "description", content: "Welcome to Replimix!" },
   ];
 };
 
-export default function Index() {
+const licenseKey =
+  import.meta.env.VITE_REPLICACHE_LICENSE_KEY || TEST_LICENSE_KEY;
+
+if (!licenseKey) {
+  throw new Error("Missing VITE_REPLICACHE_LICENSE_KEY");
+}
+
+/**
+ * Replicache instance for the document with mutators defined.
+ */
+type DocumentReplicache = Replicache<{
+  createMessage: (
+    tx: WriteTransaction,
+    { id, from, content, order }: MessageWithID,
+  ) => Promise<void>;
+}>;
+
+function usePullOnPoke(r: DocumentReplicache | null) {
+  const lastEventId = useEventSource("/api/replicache/poke", {
+    event: "poke",
+  });
+
+  useEffect(() => {
+    r?.pull();
+  }, [lastEventId]);
+}
+
+export default function ReplicachePlayground() {
+  const [replicache, setReplicache] = useState<DocumentReplicache | null>(null);
+
+  usePullOnPoke(replicache);
+
+  useEffect(() => {
+    const r = new Replicache({
+      name: "chat-user-id",
+      licenseKey,
+      schemaVersion: "1",
+      mutators: {
+        async createMessage(
+          tx: WriteTransaction,
+          { id, from, content, order }: MessageWithID,
+        ) {
+          await tx.set(`messages/${id}`, {
+            from,
+            content,
+            order,
+          });
+        },
+      },
+
+      pushURL: "/api/replicache/push",
+      pullURL: "/api/replicache/pull",
+    });
+    setReplicache(r);
+    return () => {
+      void r.close();
+    };
+  }, []);
+
+  const messages = useSubscribe(
+    replicache,
+    async (tx) => {
+      const list = await tx
+        .scan<Message>({ prefix: "messages/" })
+        .entries()
+        .toArray();
+      list.sort(([, { order: a }], [, { order: b }]) => a - b);
+      return list;
+    },
+    { default: [] },
+  );
+
+  const usernameRef = useRef<HTMLInputElement>(null);
+  const contentRef = useRef<HTMLInputElement>(null);
+
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    let last: Message | null = null;
+    if (messages.length) {
+      const lastMessageTuple = messages[messages.length - 1];
+      last = lastMessageTuple[1];
+    }
+    const order = (last?.order ?? 0) + 1;
+    const username = usernameRef.current?.value ?? "";
+    const content = contentRef.current?.value ?? "";
+
+    await replicache?.mutate.createMessage({
+      id: createId(),
+      from: username,
+      content,
+      order,
+    });
+
+    if (contentRef.current) {
+      contentRef.current.value = "";
+    }
+  };
+
   return (
-    <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>
-      <h1>Welcome to Remix</h1>
-      <ul>
-        <li>
-          <a
-            target="_blank"
-            href="https://remix.run/tutorials/blog"
-            rel="noreferrer"
-          >
-            15m Quickstart Blog Tutorial
-          </a>
-        </li>
-        <li>
-          <a
-            target="_blank"
-            href="https://remix.run/tutorials/jokes"
-            rel="noreferrer"
-          >
-            Deep Dive Jokes App Tutorial
-          </a>
-        </li>
-        <li>
-          <a target="_blank" href="https://remix.run/docs" rel="noreferrer">
-            Remix Docs
-          </a>
-        </li>
-      </ul>
+    <div>
+      <form onSubmit={onSubmit}>
+        <input ref={usernameRef} required /> says:
+        <input ref={contentRef} required /> <input type="submit" />
+      </form>
+      {messages.map(([k, v]) => (
+        <div key={k}>
+          <b>{v.from}: </b>
+          {v.content}
+        </div>
+      ))}
     </div>
   );
 }

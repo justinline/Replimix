@@ -2,6 +2,15 @@
 
 📖 See the [Remix docs](https://remix.run/docs) and the [Remix Vite docs](https://remix.run/docs/en/main/guides/vite) for details on supported features.
 
+## Postgres db
+
+- You'll need docker installed on your system
+
+`docker pull postgres`
+`docker run --name replimix-db -e POSTGRES_USER=docker -e POSTGRES_PASSWORD=docker -e POSTGRES_DB=postgres -p 5432:5432 -d postgres`
+
+- Update your .env DATABASE_URL to point to your running db, see the example.
+
 ## Development
 
 Run the Vite dev server:
