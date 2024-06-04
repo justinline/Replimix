@@ -2,6 +2,14 @@
 
 A small boilerplate app to get prototyping building local-first/multiplayer apps with Replicache and Remix.
 
+
+## Local-first
+
+We're jumping on the next availble local-first train to funsville! Read more about local first applications here: https://localfirstweb.dev/
+
+This boiler plate is a local-first chat application where you can have low-latency chat with automatic syncing in the background. Data is primarily stored in the browser and synced using things called CRDT's (via replicache) to a postgres database.
+
+## Tech
 - [Remix docs](https://remix.run/docs)
 - [Remix Vite docs](https://remix.run/docs/en/main/guides/vite)
 - [Replicache docs](https://doc.replicache.dev/)
