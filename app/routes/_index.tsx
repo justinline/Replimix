@@ -36,6 +36,7 @@ type DocumentReplicache = Replicache<{
   ) => Promise<void>;
 }>;
 
+/** Subscribes to server-side-events from the loader, and pulls the latest state when the event is received. */
 function usePullOnPoke(r: DocumentReplicache | null) {
   const lastEventId = useEventSource("/api/replicache/poke", {
     event: "poke",
