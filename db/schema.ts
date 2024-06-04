@@ -1,10 +1,4 @@
-import {
-  boolean,
-  integer,
-  pgTable,
-  text,
-  varchar,
-} from "drizzle-orm/pg-core";
+import { boolean, integer, pgTable, text, varchar } from "drizzle-orm/pg-core";
 
 export const replicache_server = pgTable("replicache_server", {
   id: integer("id").primaryKey().notNull(),

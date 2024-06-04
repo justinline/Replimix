@@ -6,10 +6,10 @@ export type Message = {
 
 export type MessageWithID = Message & { id: string };
 
-export function replog(...args: any[]) {
+export function replog(...args: Parameters<typeof console.log>) {
   console.log("[replicache]", ...args);
 }
 
-export function ereplog(...args: any[]) {
+export function ereplog(...args: Parameters<typeof console.error>) {
   console.error("[replicache]", ...args);
 }

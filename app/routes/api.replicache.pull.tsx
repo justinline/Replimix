@@ -2,8 +2,8 @@ import { type ActionFunctionArgs, json } from "@remix-run/node";
 import { replicacheServerId } from "db";
 import { sql } from "drizzle-orm";
 import type { PatchOperation, PullResponse } from "replicache";
-import { type TransactionExecutor, tx } from "./api.replicache.push";
 import { ereplog, replog } from "~/utils/replicache";
+import { type TransactionExecutor, tx } from "./api.replicache.push";
 
 export async function action({ request }: ActionFunctionArgs) {
   const resp = await pull(request);
@@ -23,7 +23,9 @@ async function pull(req: Request) {
       // Get current version.
       const [{ version: currentVersion }] = await t.execute<{
         version: number;
-      }>(sql`select version from replicache_server where id = ${replicacheServerId}`);
+      }>(
+        sql`select version from replicache_server where id = ${replicacheServerId}`,
+      );
 
       if (fromVersion > currentVersion) {
         throw new Error(
