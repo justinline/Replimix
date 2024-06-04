@@ -1,45 +1,29 @@
-# Welcome to Remix + Vite!
+# Welcome to Replimix!
 
-📖 See the [Remix docs](https://remix.run/docs) and the [Remix Vite docs](https://remix.run/docs/en/main/guides/vite) for details on supported features.
+A small boilerplate app to get prototyping building multiplayer apps with Replicache and Remix.
+
+- [Remix docs](https://remix.run/docs)
+- [Remix Vite docs](https://remix.run/docs/en/main/guides/vite)
+- [Replicache docs](https://doc.replicache.dev/)
+- [Drizzle ORM docs](https://orm.drizzle.team/docs/overview)
+- [Tailwind CSS docs](https://tailwindcss.com/docs)
 
 ## Postgres db
 
 - You'll need docker installed on your system
-
-`docker pull postgres`
-`docker run --name replimix-db -e POSTGRES_USER=docker -e POSTGRES_PASSWORD=docker -e POSTGRES_DB=postgres -p 5432:5432 -d postgres`
-
+- Pull the docker postgres image `docker pull postgres`
+- Run the postgres db in a container `docker run --name replimix-db -e POSTGRES_USER=docker -e POSTGRES_PASSWORD=docker -e POSTGRES_DB=postgres -p 5432:5432 -d postgres`
 - Update your .env DATABASE_URL to point to your running db, see the example.
+- Apply the db migrations to your postgres db `npx drizzle-kit migrate`
 
 ## Development
 
-Run the Vite dev server:
+After your db is set up, you can run the Vite dev server:
 
 ```shellscript
 npm run dev
 ```
 
-## Deployment
+## Multiplayer goodness!
 
-First, build your app for production:
-
-```sh
-npm run build
-```
-
-Then run the app in production mode:
-
-```sh
-npm start
-```
-
-Now you'll need to pick a host to deploy it to.
-
-### DIY
-
-If you're familiar with deploying Node applications, the built-in Remix app server is production-ready.
-
-Make sure to deploy the output of `npm run build`
-
-- `build/server`
-- `build/client`
+You can open `localhost:5173` and watch changes get push/pulled in realtime 🥳
