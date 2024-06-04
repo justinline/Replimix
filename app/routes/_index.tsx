@@ -118,17 +118,21 @@ export default function ReplicachePlayground() {
   };
 
   return (
-    <div>
-      <form onSubmit={onSubmit}>
-        <input ref={usernameRef} required /> says:
-        <input ref={contentRef} required /> <input type="submit" />
+    <main>
+      <form onSubmit={onSubmit} className="flex gap-2 fixed bottom-0 w-full p-4">
+        <input className="border-2 border-gray-300 p-2 rounded-md" ref={usernameRef} required placeholder="Your name"/>
+        <input className="border-2 border-gray-300 p-2 rounded-md" ref={contentRef} required placeholder="Your message"/> 
+        <input type="submit" />
       </form>
-      {messages.map(([k, v]) => (
-        <div key={k}>
-          <b>{v.from}: </b>
-          {v.content}
-        </div>
-      ))}
-    </div>
+        <ul className="flex flex-col gap-2 items-start bg-gray-100 p-4 rounded-sm h-screen">
+        {messages.map(([k, v]) => (
+          <li key={k} className="px-4 py-2 border-2 border-gray-300 rounded-full max-w-[500px]">
+            <p className="text-sm"><b>{v.from}: </b>
+            {v.content}
+            </p>
+          </li>
+        ))}
+      </ul>
+    </main>
   );
 }
